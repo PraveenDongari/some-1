@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <!-- Dark Mode Toggle -->
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <i class="fas fa-moon" id="theme-icon"></i>
+    </div>
+    
     <div class="auth-container">
         <div class="auth-card">
             <div class="auth-header">
@@ -43,6 +48,18 @@
                 <div class="form-group">
                     <label for="address" class="form-label">Address</label>
                     <textarea id="address" name="address" class="form-control" rows="2" placeholder="Full address including city, state, and zip code..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="relationship" class="form-label">Relationship to Child *</label>
+                    <select id="relationship" name="relationship" class="form-control" required>
+                        <option value="">Select Relationship</option>
+                        <option value="mother">Mother</option>
+                        <option value="father">Father</option>
+                        <option value="guardian">Legal Guardian</option>
+                        <option value="grandparent">Grandparent</option>
+                        <option value="other">Other</option>
+                    </select>
                 </div>
                 
                 <div class="form-group">
@@ -98,12 +115,13 @@
                     email: formData.get('email'),
                     phone: formData.get('phone'),
                     address: formData.get('address'),
+                    relationship: formData.get('relationship'),
                     password: formData.get('password'),
                     confirmPassword: formData.get('confirmPassword')
                 };
                 
                 // Validation
-                if (!userData.firstName || !userData.lastName || !userData.email || !userData.phone || !userData.password) {
+                if (!userData.firstName || !userData.lastName || !userData.email || !userData.phone || !userData.relationship || !userData.password) {
                     showError('Please fill in all required fields');
                     return;
                 }
@@ -179,135 +197,44 @@
                 toast.remove();
             }, 4000);
         }
+        
+        // Theme toggle functionality
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            const currentTheme = html.getAttribute('data-theme');
+            
+            if (currentTheme === 'dark') {
+                html.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        
+        // Initialize theme
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            
+            html.setAttribute('data-theme', savedTheme);
+            themeIcon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+        
+        // Initialize theme on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+        });
     </script>
     
     <style>
-        body {
-            background: linear-gradient(135deg, var(--primary-600) 0%, var(--secondary-500) 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-        }
-        
         .auth-container {
             width: 100%;
             max-width: 500px;
-        }
-        
-        .auth-card {
-            background: white;
-            border-radius: var(--border-radius-xl);
-            box-shadow: var(--shadow-xl);
-            padding: 2rem;
-            border: 1px solid var(--gray-200);
-        }
-        
-        .auth-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .auth-logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-        }
-        
-        .auth-logo i {
-            font-size: 2rem;
-            background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .auth-logo h1 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--gray-800);
-            margin: 0;
-        }
-        
-        .auth-header p {
-            color: var(--gray-600);
-            margin: 0;
-        }
-        
-        .auth-form {
-            margin-bottom: 1.5rem;
-        }
-        
-        .btn-full {
-            width: 100%;
-            justify-content: center;
-        }
-        
-        .auth-footer {
-            text-align: center;
-            padding-top: 1rem;
-            border-top: 1px solid var(--gray-200);
-        }
-        
-        .auth-footer p {
-            color: var(--gray-600);
-            margin: 0;
-        }
-        
-        .auth-footer a {
-            color: var(--primary-600);
-            text-decoration: none;
-            font-weight: 500;
-        }
-        
-        .auth-footer a:hover {
-            color: var(--primary-700);
-            text-decoration: underline;
-        }
-        
-        .form-text {
-            font-size: 0.875rem;
-            color: var(--gray-500);
-            margin-top: 0.25rem;
-        }
-        
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 1rem 1.5rem;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-lg);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 500;
-            animation: slideIn 0.3s ease-out;
-        }
-        
-        .toast-error {
-            background: var(--error-500);
-            color: white;
-        }
-        
-        .toast-success {
-            background: var(--success-500);
-            color: white;
-        }
-        
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
         }
     </style>
 </body>
